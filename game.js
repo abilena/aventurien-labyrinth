@@ -268,7 +268,9 @@ function doMovement()
         }
     }
     moved = moved || (pos_x != new_pos_x) || (pos_y != new_pos_y);
-
+    generateBlackPixelMap(); //TODO: Called twice, check whether can be optimized
+                                 // (i.p. this is called even if no movement done. on other apparently so fast that not that important
+    //TODO not working for teleport to secret chamber+check for normal teleport
     if (isBlackPixel(128 + (pos_x - new_pos_x), 128 + (pos_y - new_pos_y)) == 0)
     {
         pos_x = new_pos_x;
@@ -479,8 +481,31 @@ function doChalkDrawings()
 	}
 }
 
+var blackPixelMap;
+
+function generateBlackPixelMap() {
+    
+    //context.moveTo(x, y);
+    //context.lineTo(x, y - 1);
+    //context.stroke();
+    blackPixelMap=new Array(256);
+    var pixelData = context.getImageData(0, 0, 256, 256).data;
+    var sourceBuffer8     = new Uint8Array(pixelData.buffer);
+    for (y = 0; y < 256; y++) {
+        blackPixelMap[y]=new Array(256);
+    	for (x = 0; x < 256; x++)
+        {
+            
+    	     //blackPixelMap[y,x]=((pixelData[0] == 0) && (pixelData[1] == 0) && (pixelData[2] == 0));
+             var idx=4*(x+y*256);
+             blackPixelMap[y][x]=(sourceBuffer8[idx]==0) && (sourceBuffer8[idx+1]==0) && (sourceBuffer8[idx+2]==0);
+        }
+    }
+}
+
 function doLighting()
 {
+    generateBlackPixelMap();
     var items = new Array(16);
     for (y = 0; y < 16; y++)
     {
@@ -526,6 +551,7 @@ function isLighted(x, y)
     var step_y = (y - 128) / steps;
 
     var count = 0;
+
     for (i = 0; i < steps; i++)
     {
         if (isBlackPixel(x - Math.floor(i * step_x), y - Math.floor(i * step_y)) > 0)
@@ -537,11 +563,12 @@ function isLighted(x, y)
 
 function isBlackPixel(x, y)
 {
-    var pixelData = context.getImageData(x, y, 1, 1).data;
+    return blackPixelMap[y][x];
+    //var pixelData = context.getImageData(x, y, 1, 1).data;
     
     //context.moveTo(x, y);
     //context.lineTo(x, y - 1);
     //context.stroke();
 
-    return ((pixelData[0] == 0) && (pixelData[1] == 0) && (pixelData[2] == 0));
+    //return ((pixelData[0] == 0) && (pixelData[1] == 0) && (pixelData[2] == 0));
 }
