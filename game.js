@@ -163,18 +163,19 @@ function updateKey(e)
 
 function update()
 {
-	doMovement();
-	doDrawLabyrinth();	
-	doTriggers();
-	doChalkDrawings();
-	doLighting();
+	if (doMovement()) {
+		doDrawLabyrinth();	
+		doTriggers();
+		doChalkDrawings();
+		doLighting();
+        }
 }
 
 function doMovement()
 {
 	if (popup_visible)
-		return;
-
+		return false;
+    var moved = false;
     var new_pos_x = Math.floor(pos_x + moveX);
     var new_pos_y = Math.floor(pos_y + moveY);
 
@@ -206,7 +207,7 @@ function doMovement()
             case 66: // B key
                 if (old_x == 0)
                     return;
-
+                moved=true;
                 logMessage("Transversalis Teleport!");
                 logMessage("Ursprungs-Interferenzen f&uuml;r Transversalis-matrix: h=" + -pos_x + ", v=" + -pos_y);
                 pos_x = old_x;
@@ -218,6 +219,7 @@ function doMovement()
             case 71: // G key
                 logMessage("Transversalis Teleport!");
                 logMessage("Ursprungs-Interferenzen f&uuml;r Transversalis-matrix: h=" + -pos_x + ", v=" + -pos_y);
+		moved=true;
                 old_x = pos_x;
                 old_y = pos_y;
 				var input_x = 0 - prompt("Bitte Horizontal-Interferenz fuer Transversalis-matrix angeben", -pos_x);
@@ -235,10 +237,12 @@ function doMovement()
             case 102: // num-pad right key
             case 104: // num-pad up key
                 chalk_drawings.push(new Array(keyCode, pos_x, pos_y));
+		moved=true;
                 break;
             case 120: // F9 key: reveal entrance to secret chamber
                 logMessage("Ihr h&ouml;rt die fl&uuml;sternde Stimme des Geistes: Der Zugang zur geheimen Kammer steht euch nun offen.");
                 trigger_illusion_hit[7] = 1;
+		moved=true;
                 break;
             case 112: // F1 key: display position
                 logMessage("Aktuelle-Interferenzen f&uuml;r Transversalis-matrix: h=" + -pos_x + ", v=" + -pos_y);
@@ -254,6 +258,7 @@ function doMovement()
                 pos_x = -1709;
                 pos_y = -924;
                 logMessage("Ziel-Interferenzen f&uuml;r Transversalis-matrix: h=" + -pos_x + ", v=" + -pos_y);
+		moved=true;
                 break;
             case 116: // f5 key (refreshing browser)
             case 144: // num-lock key
@@ -262,12 +267,14 @@ function doMovement()
                 break;
         }
     }
+    moved = moved || (pos_x != new_pos_x) || (pos_y != new_pos_y);
 
     if (isBlackPixel(128 + (pos_x - new_pos_x), 128 + (pos_y - new_pos_y)) == 0)
     {
         pos_x = new_pos_x;
         pos_y = new_pos_y;
-    }
+    } 
+    return moved;
 }
 
 function doDrawLabyrinth()
