@@ -40,6 +40,11 @@ window.addEventListener("mouseleave", updateMouse, true);
 window.addEventListener("keydown", updateKey, true);
 var id = window.setInterval(update, 100);
 
+
+function hasClass(elem, className) {
+    return new RegExp(' ' + className + ' ').test(' ' + elem.className + ' ');
+}
+
 function initialize()
 {
     context = document.getElementById("labyrinth").getContext("2d");
@@ -54,7 +59,6 @@ function initialize()
         context.drawImage(img, pos_x, pos_y);
     }
     img.src = "img/labyrinth.png";
-	
 	chalk_cross = new Image();
 	chalk_arrow_up = new Image();
 	chalk_arrow_down = new Image();
@@ -127,8 +131,10 @@ function updateTouch(e)
         moveY = 0;
     }
     else {
-        moveX = -(e.changedTouches[0].clientX - (window.innerWidth / 2)) / (window.innerWidth / 2) * STEPSIZE * 3;
-        moveY = -(e.changedTouches[0].clientY - (window.innerHeight / 2)) / (window.innerHeight / 2) * STEPSIZE * 3;
+	if (!hasClass(e.target, 'mybutton')) {
+        	moveX = -(e.changedTouches[0].clientX - (window.innerWidth / 2)) / (window.innerWidth / 2) * STEPSIZE * 3;
+        	moveY = -(e.changedTouches[0].clientY - (window.innerHeight / 2)) / (window.innerHeight / 2) * STEPSIZE * 3;
+	}
     }
 }
 
@@ -143,8 +149,11 @@ function updateMouse(e)
     }
     else
     {
-        moveX = -(e.clientX - (window.innerWidth / 2)) / (window.innerWidth / 2) * STEPSIZE * 3;
-        moveY = -(e.clientY - (window.innerHeight / 2)) / (window.innerHeight / 2) * STEPSIZE * 3;
+        if (!hasClass(e.target, 'mybutton')) {
+        	moveX = -(e.clientX - (window.innerWidth / 2)) / (window.innerWidth / 2) * STEPSIZE * 3;
+        	moveY = -(e.clientY - (window.innerHeight / 2)) / (window.innerHeight / 2) * STEPSIZE * 3;
+		event.preventDefault(); //i.p. to prevent selection of elements
+	}
     }
 }
 
@@ -250,7 +259,7 @@ function doMovement()
             case 115: // F4 key: teleport to secret chamber
                 if (pos_x == -1709 && pos_y == -924)
                     return;
-
+		
                 logMessage("Transversalis Teleport!");
                 logMessage("Ursprungs-Interferenzen f&uuml;r Transversalis-matrix: h=" + -pos_x + ", v=" + -pos_y);
                 old_x = pos_x;
@@ -559,6 +568,27 @@ function isLighted(x, y)
     }
 
     return count;
+}
+
+function emulateKey(keyCode) 
+{
+var keyboardEvent = document.createEvent("KeyboardEvent");
+var initMethod = typeof keyboardEvent.initKeyboardEvent !== 'undefined' ? "initKeyboardEvent" : "initKeyEvent";
+
+
+keyboardEvent[initMethod](
+                   "keydown", // event type : keydown, keyup, keypress
+                    true, // bubbles
+                    true, // cancelable
+                    window, // viewArg: should be window
+                    false, // ctrlKeyArg
+                    false, // altKeyArg
+                    false, // shiftKeyArg
+                    false, // metaKeyArg
+                    keyCode, // keyCodeArg : unsigned long the virtual key code, else 0
+                    0 // charCodeArgs : unsigned long the Unicode character associated with the depressed key, else 0
+);
+document.dispatchEvent(keyboardEvent);
 }
 
 function isBlackPixel(x, y)

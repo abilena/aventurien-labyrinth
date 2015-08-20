@@ -103,7 +103,7 @@ body {
 	height: 190px;
 	position: fixed;
 	top: 0;
-    left: 0;
+    left: 150px;
 	z-index: 30;
 	padding: 5px;
 	background: black;
@@ -118,6 +118,36 @@ body {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
+
+#buttons {
+	width: 140px;
+	position: fixed;
+	top: 0;
+    left: 0;
+	z-index: 40;
+	padding: 5px;
+	background: black;
+	color: white;
+	font-family: Verdana, Geneva, Tahoma, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	overflow: hidden;
+
+  
+}
+
+.mybutton {
+	height: 80px;
+ 	width: 140px;
+	z-index: 50;
+	padding: 5px;
+	background: black;
+	color: white;
+	font-family: Verdana, Geneva, Tahoma, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	overflow: hidden;
+
+  
 }
 
 #messages_mask {
