@@ -134,6 +134,7 @@ function updateTouch(e)
 	if (!hasClass(e.target, 'mybutton')) {
         	moveX = -(e.changedTouches[0].clientX - (window.innerWidth / 2)) / (window.innerWidth / 2) * STEPSIZE * 3;
         	moveY = -(e.changedTouches[0].clientY - (window.innerHeight / 2)) / (window.innerHeight / 2) * STEPSIZE * 3;
+		e.preventDefault(); //i.p. to prevent selection of elements
 	}
     }
 }
@@ -152,7 +153,7 @@ function updateMouse(e)
         if (!hasClass(e.target, 'mybutton')) {
         	moveX = -(e.clientX - (window.innerWidth / 2)) / (window.innerWidth / 2) * STEPSIZE * 3;
         	moveY = -(e.clientY - (window.innerHeight / 2)) / (window.innerHeight / 2) * STEPSIZE * 3;
-		event.preventDefault(); //i.p. to prevent selection of elements
+		e.preventDefault(); //i.p. to prevent selection of elements
 	}
     }
 }
@@ -572,23 +573,7 @@ function isLighted(x, y)
 
 function emulateKey(keyCode) 
 {
-var keyboardEvent = document.createEvent("KeyboardEvent");
-var initMethod = typeof keyboardEvent.initKeyboardEvent !== 'undefined' ? "initKeyboardEvent" : "initKeyEvent";
-
-
-keyboardEvent[initMethod](
-                   "keydown", // event type : keydown, keyup, keypress
-                    true, // bubbles
-                    true, // cancelable
-                    window, // viewArg: should be window
-                    false, // ctrlKeyArg
-                    false, // altKeyArg
-                    false, // shiftKeyArg
-                    false, // metaKeyArg
-                    keyCode, // keyCodeArg : unsigned long the virtual key code, else 0
-                    0 // charCodeArgs : unsigned long the Unicode character associated with the depressed key, else 0
-);
-document.dispatchEvent(keyboardEvent);
+    keyCodes.push(keyCode);
 }
 
 function isBlackPixel(x, y)
