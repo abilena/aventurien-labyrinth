@@ -1,11 +1,18 @@
-<!DOCTYPE html>
+<?php
+    
+    $name = $_GET['name'];
+    $title = $_GET['title'];
+
+?>
+
 <html>
-<head>
-    <title>Kalias' Labyrinth</title>
-	<link rel="stylesheet" type="text/css" href="game.css" />
-	<script type="text/javascript" src="game.js"></script>
+	<head>
+		<title><?php echo($name); ?></title>
+		<link rel="stylesheet" type="text/css" href="Labyrinth.css">
+		<script type="text/javascript" src="Labyrinth.js"></script>
+		<script type="text/javascript" src="<?php echo($name); ?>/Labyrinth.Triggers.js"></script>
 </head>
-<body onload="initialize()">
+<body onload="initialize('<?php echo($name); ?>')">
     <div class="game">
         <table class="mask">
             <tr>
@@ -303,17 +310,29 @@
     <div id="popup"><div id="popup_image"></div><div id="popup_button" onclick="doHidePopup()">CLOSE</div></div>
     <div id="messages">Ihr steht vor dem Eingang des Labyrinths. Wie aus weiter Ferne k&ouml;nnt ihr eine wispernde Stimme h&ouml;ren.</div>
     <div id="messages_mask"></div>
-    <div id="buttons"> 
-        <button class="mybutton" onclick="emulateKey(112)">Display Position</button> 
-        <button class="mybutton" onclick="emulateKey(71)">Teleport</button> 
-        <button class="mybutton" onclick="emulateKey(66)">Teleport Back</button> 
-        <input type="image" class="mybutton" src="img/arrow_down.png" onclick="emulateKey(98)" />
-        <input type="image" class="mybutton" src="img/arrow_up.png" onclick="emulateKey(104)" />
-        <input type="image" class="mybutton" src="img/arrow_right.png" onclick="emulateKey(102)" />
-        <input type="image" class="mybutton" src="img/arrow_left.png" onclick="emulateKey(100)" />
-        <button class="mybutton" onclick="emulateKey(120)">Reveal</button> 
-        <button class="mybutton" onclick="emulateKey(115)">Teleport to sec</button>  
-	
+    <div id="buttons">
+        <div id="down"  class="ui button" onclick="emulateKey(83)"></div>
+        <div id="up"    class="ui button" onclick="emulateKey(87)"></div>
+        <div id="right" class="ui button" onclick="emulateKey(68)"></div>
+        <div id="left"  class="ui button" onclick="emulateKey(65)"></div>
+
+		<div id="paint" class="ui dropdown" onclick="openDropDown('paint_dropdown')"><span class="ui">MARKIEREN</span></div>
+		<div id="paint_dropdown" class="ui dropdownpopup" style="display: none">
+			<div id="paint_up"    class="ui button" onclick="emulateKey(104); openDropDown('paint_dropdown');"><span class="ui">NORDEN</span></div>
+			<div id="paint_down"  class="ui button" onclick="emulateKey(98); openDropDown('paint_dropdown');"><span class="ui">SÜDEN</span></div>
+			<div id="paint_left"  class="ui button" onclick="emulateKey(100); openDropDown('paint_dropdown');"><span class="ui">WESTEN</span></div>
+			<div id="paint_right" class="ui button" onclick="emulateKey(102); openDropDown('paint_dropdown');"><span class="ui">OSTEN</span></div>
+		</div>
+		
+		<div id="action" class="ui dropdown" onclick="openDropDown('action_dropdown')"><span class="ui">AKTIONEN</span></div>
+		<div id="action_dropdown" class="ui dropdownpopup" style="display: none">
+			<div id="display"     class="ui button" onclick="emulateKey(112); openDropDown('action_dropdown');"><span class="ui">POSITION</span></div>
+			<div id="teleport"    class="ui button" onclick="emulateKey(71); openDropDown('action_dropdown');"><span class="ui">TELEPORT</span></div> 
+			<div id="return"      class="ui button" onclick="emulateKey(66); openDropDown('action_dropdown');"><span class="ui">ZURÜCK</span></div> 
+			<div id="reveal"      class="ui button" onclick="emulateKey(120); openDropDown('action_dropdown');"><span class="ui">ENTHÜLLEN</span></div> 
+			<div id="tele2"       class="ui button" onclick="emulateKey(115); openDropDown('action_dropdown');"><span class="ui">BEENDEN</span></div>  
+			<a id="fullscreen"  class="ui button" href="#" target="_top"><span class="ui">VOLLBILD</span></a>  
+		</div>
     </div>
     <canvas width="2755" height="3190" id="triggers"></canvas>
 </body>

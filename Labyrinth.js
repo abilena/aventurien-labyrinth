@@ -1,6 +1,8 @@
 
 var STEPSIZE = 9;
 
+var hasTriggers = false;
+var labyrinth_name;
 var pos_x;
 var pos_y;
 var old_x;
@@ -45,8 +47,9 @@ function hasClass(elem, className) {
     return new RegExp(' ' + className + ' ').test(' ' + elem.className + ' ');
 }
 
-function initialize()
+function initialize(name)
 {
+	labyrinth_name = name;
     context = document.getElementById("labyrinth").getContext("2d");
 
     pos_x = -1250;
@@ -58,7 +61,7 @@ function initialize()
     {
         context.drawImage(img, pos_x, pos_y);
     }
-    img.src = "img/labyrinth.png";
+    img.src = labyrinth_name + "/img/labyrinth.png";
 	chalk_cross = new Image();
 	chalk_arrow_up = new Image();
 	chalk_arrow_down = new Image();
@@ -77,48 +80,17 @@ function initialize()
     {
         trigger_context.drawImage(trigger_img, 0, 0);
     }
-    trigger_img.src = "img/triggers.png";
+    trigger_img.src = labyrinth_name + "/img/triggers.png";
 	
 	trigger_illusion_hit = new Array();
 	illusion_images = new Array();
 	illusion_images_x = new Array();
 	illusion_images_y = new Array();
-	for (index = 1; index < 9; index++)
-	{
-		var illusion_image = new Image();
-		illusion_image.src = "img/illusion_" + index + ".png";
-		
-		trigger_illusion_hit.push(0);
-		illusion_images.push(illusion_image);
-		illusion_images_x.push(0);
-		illusion_images_y.push(0);
+
+	if (hasTriggers) {
+		onInitialize();
 	}
 	
-	illusion_images_x[0] = 2241;
-	illusion_images_y[0] = 216;
-	illusion_images_x[1] = 2160;
-	illusion_images_y[1] = 2322;
-	illusion_images_x[2] = 2133;
-	illusion_images_y[2] = 1350;
-	illusion_images_x[3] = 1350;
-	illusion_images_y[3] = 661;
-	illusion_images_x[4] = 567;
-	illusion_images_y[4] = 1350;
-	illusion_images_x[5] = 1350;
-	illusion_images_y[5] = 2227;
-	illusion_images_x[6] = 675;
-	illusion_images_y[6] = 2403;
-	illusion_images_x[7] = 1849;
-	illusion_images_y[7] = 999;
-	
-	trigger_golem_hit = new Array();
-	for (index = 0; index < 6; index++)
-		trigger_golem_hit.push(0);
-
-	trigger_monster_hit = new Array();
-	for (index = 0; index < 8; index++)
-		trigger_monster_hit.push(0);
-		
 	popup_visible = false;
 }
 
@@ -131,7 +103,7 @@ function updateTouch(e)
         moveY = 0;
     }
     else {
-	if (!hasClass(e.target, 'mybutton')) {
+	if (!hasClass(e.target, 'ui')) {
         	moveX = -(e.changedTouches[0].clientX - (window.innerWidth / 2)) / (window.innerWidth / 2) * STEPSIZE * 3;
         	moveY = -(e.changedTouches[0].clientY - (window.innerHeight / 2)) / (window.innerHeight / 2) * STEPSIZE * 3;
 		e.preventDefault(); //i.p. to prevent selection of elements
@@ -150,7 +122,7 @@ function updateMouse(e)
     }
     else
     {
-        if (!hasClass(e.target, 'mybutton')) {
+        if (!hasClass(e.target, 'ui')) {
         	moveX = -(e.clientX - (window.innerWidth / 2)) / (window.innerWidth / 2) * STEPSIZE * 3;
         	moveY = -(e.clientY - (window.innerHeight / 2)) / (window.innerHeight / 2) * STEPSIZE * 3;
 		e.preventDefault(); //i.p. to prevent selection of elements
@@ -175,10 +147,14 @@ function update()
 {
 	if (doMovement()) {
 		doDrawLabyrinth();	
-		doTriggers();
+		
+		if (hasTriggers) {
+			doTriggers();
+		}
+		
 		doChalkDrawings();
 		doLighting();
-        }
+	}
 }
 
 function doMovement()
@@ -225,11 +201,14 @@ function doMovement()
                 old_x = 0;
                 old_y = 0;
                 logMessage("Ziel-Interferenzen f&uuml;r Transversalis-matrix: h=" + -pos_x + ", v=" + -pos_y);
+				new_pos_x = pos_x;
+				new_pos_y = pos_y;
+				moved = true;
                 break;
             case 71: // G key
                 logMessage("Transversalis Teleport!");
                 logMessage("Ursprungs-Interferenzen f&uuml;r Transversalis-matrix: h=" + -pos_x + ", v=" + -pos_y);
-		moved=true;
+				moved=true;
                 old_x = pos_x;
                 old_y = pos_y;
 				var input_x = 0 - prompt("Bitte Horizontal-Interferenz fuer Transversalis-matrix angeben", -pos_x);
@@ -239,6 +218,9 @@ function doMovement()
 					pos_x = input_x;
 					pos_y = input_y;
 					logMessage("Ziel-Interferenzen f&uuml;r Transversalis-matrix: h=" + -pos_x + ", v=" + -pos_y);
+					new_pos_x = input_x;
+					new_pos_y = input_y;
+					moved = true;
 				}
                 break;
             case 98: // num-pad down key
@@ -247,12 +229,12 @@ function doMovement()
             case 102: // num-pad right key
             case 104: // num-pad up key
                 chalk_drawings.push(new Array(keyCode, pos_x, pos_y));
-		moved=true;
+				moved=true;
                 break;
             case 120: // F9 key: reveal entrance to secret chamber
                 logMessage("Ihr h&ouml;rt die fl&uuml;sternde Stimme des Geistes: Der Zugang zur geheimen Kammer steht euch nun offen.");
                 trigger_illusion_hit[7] = 1;
-		moved=true;
+				moved=true;
                 break;
             case 112: // F1 key: display position
                 logMessage("Aktuelle-Interferenzen f&uuml;r Transversalis-matrix: h=" + -pos_x + ", v=" + -pos_y);
@@ -267,10 +249,12 @@ function doMovement()
                 old_y = pos_y;
                 pos_x = -1709;
                 pos_y = -924;
+                new_pos_x = -1709;
+                new_pos_y = -924;
                 logMessage("Ziel-Interferenzen f&uuml;r Transversalis-matrix: h=" + -pos_x + ", v=" + -pos_y);
-		moved=true;
+				moved = true;
                 break;
-            case 116: // f5 key (refreshing browser)
+            case 116: // F5 key: avoid refreshing browser
             case 144: // num-lock key
                 break;
             default:
@@ -292,92 +276,6 @@ function doMovement()
 function doDrawLabyrinth()
 {
     context.drawImage(img, pos_x, pos_y);
-}
-
-function doTriggers()
-{
-    var pixelData = trigger_context.getImageData(128 - pos_x, 128 - pos_y, 1, 1).data;
-	var index;
-	
-	if (pixelData[0] == 255)
-	{
-		index = pixelData[1] - 1;
-		
-		if (trigger_illusion_hit[index] == 0)
-		{
-			var malus = -8;
-			if (index == 7)
-				malus = -15;
-		
-			if (succeededAnySkillCheck(malus))
-			{
-				trigger_illusion_hit[index] = 1;
-			}
-			else
-			{
-				trigger_illusion_hit[index] = 2;
-			}
-		}
-	}
-	else if (pixelData[1] == 255)
-	{
-		index = pixelData[0] - 1;
-	
-		if (trigger_golem_hit[index] == 0)
-		{
-			doShowPopup("img/popup_mondstein_golemid.png", "Kampf: Die W&auml;chter aus Mondstein");
-			trigger_golem_hit[index] = 1;
-		}
-	}
-	else if (pixelData[2] == 255)
-	{
-		index = pixelData[0];
-	
-		if (trigger_monster_hit[index] == 0)
-		{
-			if (index == 1)
-				doShowPopup("img/popup_gruftasseln.png", "Kampf: Das Gruftasselnest");
-			if (index == 2)
-				doShowPopup("img/popup_hoelenspinnen.png", "Kampf: Die H&ouml;hlenspinnen");
-			if (index == 3)
-				doShowPopup("img/popup_library.png", "Entdeckt: Die Bibliothek");
-			if (index == 4)
-				doShowPopup("img/popup_geheimraum.png", "Entdeckt: Der Geheimraum");
-			if (index == 5)
-				doShowPopup("img/popup_speicherraum.png", "Entdeckt: Der Speicherraum");
-			if (index == 6)
-				doShowPopup("img/popup_seelenkammer.png", "Entdeckt: Die Seelenkammer der Bashuridin");
-			if (index == 7)
-				doShowPopup("img/popup_gang.png", "Entdeckt: Der verzerrte Gang");
-				
-			trigger_monster_hit[index] = 1;
-		}
-	}
-	else
-	{
-		var check = Math.floor(Math.random() * 100000);
-		if (check == 42)
-		{
-			index = 0;
-			
-			if (trigger_monster_hit[index] == 0)
-			{
-				doShowPopup("img/popup_wolfsratten.png", "Kampf: Ratten im Gem&auml;uer");
-				trigger_monster_hit[index] = 1;
-			}
-		}
-	}
-	
-	for (index = 0; index < trigger_illusion_hit.length; index++)
-	{
-		if (trigger_illusion_hit[index] == 1)
-		{
-			var x = illusion_images_x[index];
-			var y = illusion_images_y[index];
-		
-			context.drawImage(illusion_images[index], pos_x + x, pos_y + y);
-		}
-	}
 }
 
 function roll20()
@@ -418,13 +316,14 @@ function succeededAnySkillCheck(malus)
 {
 	var success = false;
 	
-	success = succeededSkillCheck("Wapiya",     12, 13, 13, 8, malus) || success;
-	success = succeededSkillCheck("Praiala",    13, 15, 15, 7, malus) || success;
-	success = succeededSkillCheck("Idrasmine",  10, 15, 15, 12, malus) || success;
-	success = succeededSkillCheck("Dariyon",    15, 14, 14, 10, malus) || success;
-	success = succeededSkillCheck("Amaryllion", 14, 15, 15, 9, malus) || success;
 	success = succeededSkillCheck("Alawin",     12, 12, 12, 8, malus) || success;
-	success = succeededSkillCheck("Acanio",     10, 15, 15, 12, malus) || success;
+	success = succeededSkillCheck("Dariyon",    15, 14, 14, 10, malus) || success;
+	success = succeededSkillCheck("Idrasmine",  10, 15, 15, 12, malus) || success;
+	success = succeededSkillCheck("Praiala",    13, 15, 15, 7, malus) || success;
+
+	// success = succeededSkillCheck("Wapiya",     12, 13, 13, 8, malus) || success;
+	// success = succeededSkillCheck("Amaryllion", 14, 15, 15, 9, malus) || success;
+	// success = succeededSkillCheck("Acanio",     10, 15, 15, 12, malus) || success;
 
 	return success;
 }
@@ -586,4 +485,17 @@ function isBlackPixel(x, y)
     //context.stroke();
 
     //return ((pixelData[0] == 0) && (pixelData[1] == 0) && (pixelData[2] == 0));
+}
+
+function openDropDown(id)
+{
+	var dropDown = document.getElementById(id);
+	if (dropDown.style.display == "block")
+	{
+		dropDown.style.display = "none";
+	}
+	else
+	{
+		dropDown.style.display = "block";
+	}
 }
