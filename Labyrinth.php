@@ -319,7 +319,7 @@
 		<div id="paint" class="ui dropdown" onclick="openDropDown('paint_dropdown')"><span class="ui">MARKIEREN</span></div>
 		<div id="paint_dropdown" class="ui dropdownpopup" style="display: none">
 			<div id="paint_up"    class="ui button" onclick="emulateKey(104); openDropDown('paint_dropdown');"><span class="ui">NORDEN</span></div>
-			<div id="paint_down"  class="ui button" onclick="emulateKey(98); openDropDown('paint_dropdown');"><span class="ui">SÜDEN</span></div>
+			<div id="paint_down"  class="ui button" onclick="emulateKey(98); openDropDown('paint_dropdown');"><span class="ui">S&UUML;DEN</span></div>
 			<div id="paint_left"  class="ui button" onclick="emulateKey(100); openDropDown('paint_dropdown');"><span class="ui">WESTEN</span></div>
 			<div id="paint_right" class="ui button" onclick="emulateKey(102); openDropDown('paint_dropdown');"><span class="ui">OSTEN</span></div>
 		</div>
@@ -328,8 +328,8 @@
 		<div id="action_dropdown" class="ui dropdownpopup" style="display: none">
 			<div id="display"     class="ui button" onclick="emulateKey(112); openDropDown('action_dropdown');"><span class="ui">POSITION</span></div>
 			<div id="teleport"    class="ui button" onclick="emulateKey(71); openDropDown('action_dropdown');"><span class="ui">TELEPORT</span></div> 
-			<div id="return"      class="ui button" onclick="emulateKey(66); openDropDown('action_dropdown');"><span class="ui">ZURÜCK</span></div> 
-			<div id="reveal"      class="ui button" onclick="emulateKey(120); openDropDown('action_dropdown');"><span class="ui">ENTHÜLLEN</span></div> 
+			<div id="return"      class="ui button" onclick="emulateKey(66); openDropDown('action_dropdown');"><span class="ui">ZUR&UUML;CK</span></div> 
+			<div id="reveal"      class="ui button" onclick="emulateKey(120); openDropDown('action_dropdown');"><span class="ui">ENTH&UUML;LLEN</span></div> 
 			<div id="tele2"       class="ui button" onclick="emulateKey(115); openDropDown('action_dropdown');"><span class="ui">BEENDEN</span></div>  
 			<a id="fullscreen"  class="ui button" href="#" target="_top"><span class="ui">VOLLBILD</span></a>  
 		</div>
