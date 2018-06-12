@@ -57,6 +57,7 @@ function initialize(name)
 	old_x = 0;
 	old_y = 0;
     img = new Image();
+	img.style.display = "none";
     img.onload = function ()
     {
         context.drawImage(img, pos_x, pos_y);
@@ -98,16 +99,19 @@ function updateTouch(e)
 {
     e = e || window.event;
 
-    if ((e.changedTouches.length == 0) || (e.changedTouches[0].clientX == 0 && e.changedTouches[0].clientY == 0)) {
+    if ((e.changedTouches.length == 0) || (e.changedTouches[0].clientX == 0 && e.changedTouches[0].clientY == 0))
+	{
         moveX = 0;
         moveY = 0;
     }
-    else {
-	if (!hasClass(e.target, 'ui')) {
+    else
+	{
+		if (!hasClass(e.target, 'ui'))
+		{
         	moveX = -(e.changedTouches[0].clientX - (window.innerWidth / 2)) / (window.innerWidth / 2) * STEPSIZE * 3;
         	moveY = -(e.changedTouches[0].clientY - (window.innerHeight / 2)) / (window.innerHeight / 2) * STEPSIZE * 3;
-		e.preventDefault(); //i.p. to prevent selection of elements
-	}
+			//e.preventDefault(); //i.p. to prevent selection of elements
+		}
     }
 }
 

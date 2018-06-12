@@ -1,13 +1,12 @@
-<?php
-    
-    $name = $_GET['name'];
-    $title = $_GET['title'];
-
-?>
-
+<!doctype html>
 <html>
 	<head>
+		<?php
+			$name = $_GET['name'];
+			$title = $_GET['title'];
+		?>
 		<title><?php echo($name); ?></title>
+		<meta name="viewport" content="width=device-width">
 		<link rel="stylesheet" type="text/css" href="Labyrinth.css">
 		<script type="text/javascript" src="Labyrinth.js"></script>
 		<script type="text/javascript" src="<?php echo($name); ?>/Labyrinth.Triggers.js"></script>
@@ -307,7 +306,7 @@
         <canvas width="256" height="256" id="labyrinth">Can't load the maze game, because your browser doesn't support HTML5.</canvas>
         <img class="player" />
     </div>
-    <div id="popup"><div id="popup_image"></div><div id="popup_button" onclick="doHidePopup()">CLOSE</div></div>
+    <div id="popup"><div id="popup_image"></div><div id="popup_button" class="ui" onclick="doHidePopup()">CLOSE</div></div>
     <div id="messages">Ihr steht vor dem Eingang des Labyrinths. Wie aus weiter Ferne k&ouml;nnt ihr eine wispernde Stimme h&ouml;ren.</div>
     <div id="messages_mask"></div>
     <div id="buttons">
